@@ -1,4 +1,4 @@
-# Vue 3 + TypeScript + Vite
+# Vue 3 + TypeScript + Vite + Tailwind CSS
 
 ## Installation Guide ⚙️
 npm create vite@latest  cart-valley-webapp -- --template vue-ts
