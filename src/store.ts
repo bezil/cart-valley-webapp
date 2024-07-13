@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia'
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import { baseUrl } from "./main.ts"
 import { type ProductsData } from "./types/Inventory"
 
 const products = ref<ProductsData>();
 
 export const useCartStore = defineStore('cart', () => {
+    const getInventoryProducts = computed(() => products.value?.data);
+
+    const getInventoryProductsCount = computed(() => products.value?.data.length);
+
     const setInventoryProducts = (products_list: ProductsData) => {
         console.log("💈Storing inventory..", products_list)
         products.value = products_list;
@@ -29,6 +33,8 @@ export const useCartStore = defineStore('cart', () => {
 
     return {
         fetchProducts,
+        getInventoryProducts,
         setInventoryProducts,
+        getInventoryProductsCount,
     }
 })
