@@ -3,7 +3,7 @@
         <div class="text-gray-500 pb-4">
         Inventory
         <span class="bg-gray-400 text-white text-sm rounded-xl p-1 px-2">
-            Total: <b>{{ count }}</b>
+            Total: <b>{{ count ?? 0 }}</b>
         </span>
     </div>
     <div class="flex flex-col flex-wrap gap-2
@@ -19,6 +19,7 @@
                 :description="product.description"
                 :quantity="Number(product.quantity)"
                 :price="Number(product.price)"
+                @button-clicked="emit('add-to-cart-requested', product)"
             />
         </div>
     </div>
@@ -35,4 +36,6 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const emit = defineEmits()
 </script>

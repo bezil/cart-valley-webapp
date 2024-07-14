@@ -1,18 +1,71 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from "vue"
 import { baseUrl } from "./main.ts"
-import { type ProductsData } from "./types/Inventory"
+import { type Product, type ProductsData } from "./types/Inventory"
 
-const products = ref<ProductsData>();
+export enum Page {
+    INVENTORY_PAGE = "inventory",
+    CART_PAGE = "cart"
+}
+
+const currentState = ref(Page.INVENTORY_PAGE);
+const productsData = ref<ProductsData>();
+const cartProducts = ref<Product[]>([]);
+const inventoryProducts = ref<Product[]>([]);
 
 export const useCartStore = defineStore('cart', () => {
-    const getInventoryProducts = computed(() => products.value?.data);
+    // Get a read-only array of products in the inventory
+    const getInventoryProducts = computed(() => inventoryProducts.value);
 
-    const getInventoryProductsCount = computed(() => products.value?.data.length);
+    // Get a read-only array of products in the cart
+    const getCartProducts = computed(() => cartProducts.value);
 
-    const setInventoryProducts = (products_list: ProductsData) => {
-        console.log("💈Storing inventory..", products_list)
-        products.value = products_list;
+
+    // Get the number of products in the inventory
+    const getInventoryProductsCount = computed(() => inventoryProducts.value?.length);
+
+    // Get the number of products in the cart
+    const getCartProductsCount = computed(() => cartProducts.value?.length);
+
+    // Store the products data in the store
+    const setInventoryProducts = (products_data: ProductsData) => {
+        console.log("💈Storing inventory..", products_data)
+        productsData.value = products_data;
+        // Store the products in the inventory
+        inventoryProducts.value = productsData.value.data;
+    }
+
+    const setCartProducts = (product: Product) => {
+        // Check if the product is already in the cart
+        if (cartProducts.value.includes(product)) {
+            return
+        }
+
+        // Add the product to the cart
+        cartProducts.value.push(product);
+        // Remove the product from the inventory
+        inventoryProducts.value = inventoryProducts.value?.filter(
+            (this_product) => this_product.id !== product.id
+        ) ?? []
+    }
+
+    const removeCartProducts = (product: Product) => {
+        cartProducts.value = cartProducts.value.filter(
+            (this_product) => this_product.id !== product.id
+        )
+
+        // Check if the product is already in the inventory
+        if (cartProducts.value.includes(product)) {
+            return
+        }
+
+        inventoryProducts.value.push(product)
+    }
+
+    // Set the current page
+    const setCurrentPage = (page: Page) => {
+        // Set the current state to the provided page
+        currentState.value = page
     }
 
     // Fetch products from the API
@@ -32,9 +85,15 @@ export const useCartStore = defineStore('cart', () => {
     }
 
     return {
+        currentState,
         fetchProducts,
+        setCurrentPage,
+        setCartProducts,
+        getCartProducts,
+        removeCartProducts,
         getInventoryProducts,
         setInventoryProducts,
+        getCartProductsCount,
         getInventoryProductsCount,
     }
 })

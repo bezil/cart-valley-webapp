@@ -24,9 +24,12 @@
             </div>
 
             <!--Add to Cart-->
-            <div class="flex items-center gap-2 rounded-xl text-purple-800 hover:text-white text-sm px-2 py-1
-                bg-gradient-to-l from-purple-100 cursor-pointer
-                hover:bg-gradient-to-r hover:from-indigo-500 hover:from-10% hover:to-purple-500 hover:to-90%">
+            <div
+                class="flex items-center gap-2 rounded-xl text-purple-800 hover:text-white text-sm px-2 py-1 bg-gradient-to-l from-purple-100
+                hover:bg-gradient-to-r hover:from-indigo-500 hover:from-10% hover:to-purple-500 hover:to-90%"
+                :class="quantity === 0 ? 'cursor-not-allowed' : 'cursor-pointer'"
+                @click="addCartClickHandler"
+            >
                 Add to Cart
                 <span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
@@ -41,7 +44,17 @@
 <script setup lang="ts">
 import { type Product } from "../types/Inventory"
 
-defineProps<Product>()
+const props = defineProps<Product>()
+
+const emit = defineEmits()
+
+const addCartClickHandler = () => {
+    if (props.quantity === 0) {
+        return;
+    }
+
+    emit('button-clicked');
+}
 </script>
 
 <style scoped>
