@@ -7,7 +7,7 @@
             </span>
         </div>
         <div class="flex w-full">
-            <div class="flex flex-col w-full md:max-w-[70%]">
+            <div class="flex flex-col w-full md:max-w-[70%] mb-32 md:mb-8">
                 <p v-if="count === 0" class="text-sm text-gray-500 py-14 rounded-md text-center bg-gray-200">
                     No products added yet
                 </p>
@@ -22,57 +22,67 @@
                         :description="product.description"
                         :quantity="Number(product.quantity)"
                         :price="Number(product.price)"
-                        @price-updated="updatePrice($event)"
+                        :sold="Number(product.sold ?? 1)"
+                        :new-price="Number(product.newPrice ?? product.price)"
                         @button-clicked="emit('remove-cart-requested', product)"
                     />
                 </div>
             </div>
-            <div class="hidden md:flex flex-col bg-white justify-between p-4 ml-4 flex-grow h-32 rounded-md">
+            <div class="hidden md:flex flex-col bg-white justify-between p-4 ml-4 flex-grow h-32 rounded-md
+                md:absolute md:right-[70px] md:top-[128px] md:w-[25vw]">
                 <div class="text-sm text-gray-500">
                     Total Price:
                     <p class="text-lg text-gray-700">$ {{ totalPrice }}</p>
                 </div>
-                <div class="bg-gradient-to-r from-indigo-500 from-10% to-purple-500 to-90% shadow-md
-                    hover:to-purple-600 text-white rounded-2xl p-1 px-4 text-center cursor-pointer">
+                <div
+                    class="bg-gradient-to-r from-indigo-500 from-10% to-purple-500 to-90% shadow-md
+                    hover:to-purple-600 text-white rounded-2xl p-1 px-4 text-center"
+                    :class="products && products.length == 0 ? 'cursor-not-allowed' : 'cursor-pointer'"
+                    @click="checkoutHandler"
+                >
                     Checkout
                 </div>
             </div>
         </div>
 
         <!-- Checkout footer -->
-        <div class="footer md:hidden fixed bottom-0 px-4 py-4 mb-8 bg-white flex justify-between items-center rounded-lg">
+        <div class="footer md:hidden fixed bottom-0 px-4 py-4 mb-8 bg-white flex justify-between items-center rounded-lg shadow-lg">
             <div class="text-sm text-gray-500">
                 Total Price: <b class="text-gray-700">$ {{ totalPrice }}</b>
             </div>
             <div class="bg-gradient-to-r from-indigo-500 from-10% to-purple-500 to-90% shadow-md
-                hover:to-purple-600 text-white rounded-2xl p-1 px-4 cursor-pointer">Checkout</div>
+                hover:to-purple-600 text-white rounded-2xl p-1 px-4"
+                :class="products && products.length == 0 ? 'cursor-not-allowed' : 'cursor-pointer'"
+                @click="checkoutHandler"
+            >Checkout</div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
 import ProductPriceCard from "./ProductPriceCard.vue"
-import { type Product } from "../types/Inventory"
+import { type CartProduct } from "../types/Cart"
 
 interface Props {
-  products?: Product[];
+  products?: CartProduct[];
   count?: Number
+  totalPrice?: Number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits()
 
-const totalPrice = ref(0)
-
-const updatePrice = (event: number) => {
-    totalPrice.value = totalPrice.value + event;
+const checkoutHandler = () => {
+    if (props.products && props.products.length === 0) {
+        return
+    }
+    emit('checkout-requested')
 }
 </script>
 
 <style scoped>
 .footer {
-    width: calc(100vw - 80px)
+    width: calc(100vw - 96px)
 }
 </style>

@@ -9,8 +9,8 @@
                 <p class="text-sm text-gray-500 mb-2">{{ description }}</p>
             </div>
             <div class="text-right">
-                <p>${{ times * price }}</p>
-                <p class="text-xs text-gray-500">{{ `${times} * ${price}` }}</p>
+                <p>${{ newPrice }}</p>
+                <p class="text-xs text-gray-500">{{ `${ sold } * ${price}` }}</p>
             </div>
         </div>
         <!--Bottom Section-->
@@ -21,7 +21,7 @@
                         class="cursor-pointer px-2"
                         @click="increment"
                     >+</span>
-                    <b>{{ times }}</b>
+                    <b>{{ sold }}</b>
                     <span
                         class="cursor-pointer px-2"
                         @click="decrement"
@@ -51,34 +51,30 @@
 </template>
 
 <script setup lang="ts">
-import { type Product } from "../types/Inventory"
-import { ref, onMounted } from "vue"
+import { type CartProduct } from "../types/Cart"
+import { useCartStore } from "../store"
 
-const props = defineProps<Product>()
+const cartStore = useCartStore();
+
+const props = defineProps<CartProduct>()
 
 const emit = defineEmits()
 
-const times = ref(1)
-
 const increment = () => {
-    if (times.value === props.quantity) {
+    if (props.sold === props.quantity) {
         return;
     }
-    times.value = times.value + 1;
-    emit('price-updated', (props.price))
+
+    cartStore.updateCartProduct(props.id, props.sold + 1)
 }
 
 const decrement = () => {
-    if (times.value === 1) {
+    if (props.sold === 1) {
         return;
     }
-    times.value = times.value - 1;
-    emit('price-updated', -(props.price))
-}
 
-onMounted(() => {
-    emit('price-updated', (times.value * props.price))
-})
+    cartStore.updateCartProduct(props.id, props.sold - 1)
+}
 </script>
 
 <style scoped>

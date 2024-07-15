@@ -25,9 +25,10 @@
 
             <!--Add to Cart-->
             <div
-                class="flex items-center gap-2 rounded-xl text-purple-800 hover:text-white text-sm px-2 py-1 bg-gradient-to-l from-purple-100
-                hover:bg-gradient-to-r hover:from-indigo-500 hover:from-10% hover:to-purple-500 hover:to-90%"
-                :class="quantity === 0 ? 'cursor-not-allowed' : 'cursor-pointer'"
+                class="flex items-center gap-2 rounded-xl text-purple-800 text-sm px-2 py-1 bg-gradient-to-l from-purple-100
+                "
+                :class="quantity === 0 ? 'cursor-not-allowed'
+                    : 'hover:text-white cursor-pointer hover:bg-gradient-to-r hover:from-indigo-500 hover:from-10% hover:to-purple-500 hover:to-90%'"
                 @click="addCartClickHandler"
             >
                 Add to Cart

@@ -29,7 +29,9 @@ cartStore.fetchProducts()
       v-else-if="cartStore.currentState == Page.CART_PAGE"
       :products="cartStore.getCartProducts"
       :count="cartStore.getCartProductsCount"
+      :total-price="cartStore.getCartProductsTotalPrice"
       @remove-cart-requested="cartStore.removeCartProducts($event)"
+      @checkout-requested="cartStore.setCheckoutPayload"
     />
   </div>
 </template>
